@@ -54,6 +54,50 @@ function showHistories() {
     var nick = getNick();
     $.getJSON(url, {user: nick}, function(data) {
         console.log('histories', data);
+        var name = decodeURI("%E8%B4%AD%E7%89%A9%E5%8E%86%E5%8F%B2");
+        $('#site-nav-bd p.login-info').append('<a id="btn_taohistory" href="javascript:;">' + name + '(' + data.count + ')</a>');
+        var $history = $('<div id="taohistory"></div>'), position = $('#shop-head').position();
+        var html = '<ul>';
+        for(var i = 0, l = data.items.length; i < l; i++) {
+            var item = data.items[i];
+            var title = item.title;
+            if(title.length > 18) {
+                title = title.substring(0, 15) + '...';
+            }
+            html += '<li><a href="' + item.detail_url + '" target="_blank" title="' + item.title + '">' 
+                  + '<img src="' + item.pic_url + '_160x160.jpg" /><br/>' + title + '</a></li>'; 
+        }
+        html += '</li>';
+        $history.css({
+            "position": 'absolute',
+            "z-index": 10000,
+            "top": position.top,
+            "left": 0,
+            "padding": '20px 50px 20px 50px',
+            "width": '100%',
+            "height": '100%',
+            "color": 'white',
+            "display": "none",
+            "background-color": '#333'
+        }).html(html);
+        $history.find('ul li').css({
+            "float": 'left',
+            "margin": '3px',
+            "background-color": '#121212',
+            "border": '1px solid #292929',
+            "border-radius": "5px",
+            "padding": "5px"
+        }).find('img').css({
+            'width': '160px',
+            'height': '160px'
+        });
+        $('#btn_taohistory').click(function() {
+            $('#taohistory').toggle();
+        });
+//        $(document).keypress(function() {
+//            console.log(arguments)
+//        });
+        $(document.body).append($history);
     });
 };
 
@@ -89,7 +133,7 @@ setTimeout(function() {
            data.user = nick;
            var url = API_HOST + '/history/save?callback=?';
            $.getJSON(url, data, function(result) {
-               console.log(data, result);
+//               console.log(data, result);
            });
         });
     }
