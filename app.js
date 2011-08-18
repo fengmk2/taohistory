@@ -41,7 +41,7 @@ app.get('/history/save', function(req, res, next) {
 
 app.get('/history', function(req, res, next) {
     var cb = req.query.callback, query = {user: req.query.user};
-    db.histories.find(query).sort({updated_at: -1}).limit(20).toArray(function(err, items) {
+    db.histories.find(query).sort({updated_at: -1}).limit(49).toArray(function(err, items) {
         db.histories.count(query, function(err, count) {
             res.send(cb + '(' + JSON.stringify({count: count, items: items || []}) + ');');
         });

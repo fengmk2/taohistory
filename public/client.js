@@ -56,26 +56,26 @@ function showHistories() {
         console.log('histories', data);
         var name = decodeURI("%E8%B4%AD%E7%89%A9%E5%8E%86%E5%8F%B2");
         $('#site-nav-bd p.login-info').append('<a id="btn_taohistory" href="javascript:;">' + name + '(' + data.count + ')</a>');
-        var $history = $('<div id="taohistory"></div>'), position = $('#shop-head').position();
+        var $history = $('<div id="taohistory"></div>'), top = $('#site-nav').height();
         var html = '<ul>';
         for(var i = 0, l = data.items.length; i < l; i++) {
             var item = data.items[i];
             var title = item.title;
-            if(title.length > 18) {
-                title = title.substring(0, 15) + '...';
+            if(title.length > 14) {
+                title = title.substring(0, 12) + '...';
             }
             html += '<li><a href="' + item.detail_url + '" target="_blank" title="' + item.title + '">' 
-                  + '<img src="' + item.pic_url + '_160x160.jpg" /><br/>' + title + '</a></li>'; 
+                  + '<img src="' + item.pic_url + '_160x160.jpg" /><br/>' + title + '</a>'
+                  + '<br/><span></span></li>'; 
         }
         html += '</li>';
         $history.css({
             "position": 'absolute',
             "z-index": 10000,
-            "top": position.top,
+            "top": top,
             "left": 0,
-            "padding": '20px 50px 20px 50px',
+            "padding": '20px 0 20px 0',
             "width": '100%',
-            "height": '100%',
             "color": 'white',
             "display": "none",
             "background-color": '#333'
@@ -86,13 +86,18 @@ function showHistories() {
             "background-color": '#121212',
             "border": '1px solid #292929',
             "border-radius": "5px",
-            "padding": "5px"
+            "padding": "5px",
+            "width": "160px"
         }).find('img').css({
             'width': '160px',
             'height': '160px'
         });
-        $('#btn_taohistory').click(function() {
-            $('#taohistory').toggle();
+        $('#btn_taohistory').mouseenter(function() {
+            $('#taohistory').show().mouseenter(function() {
+                $(this).show();
+            }).mouseleave(function() {
+                $(this).hide();
+            });
         });
 //        $(document).keypress(function() {
 //            console.log(arguments)
@@ -101,8 +106,11 @@ function showHistories() {
     });
 };
 
-setTimeout(function() {
-
+function saveHistory() {
+    var current_url = window.location.href;
+    if(current_url.indexOf('item.') < 0) {
+        return;
+    }
     var params = decodeForm(window.location.search);
     if(params.id) {
         var nick = getNick();
@@ -128,6 +136,15 @@ setTimeout(function() {
                if(index > 0) {
                    data.title = data.title.substring(0, index);
                }
+               //#J_ImgBooth
+               var pic_url = $('#J_ImgBooth').attr('src');
+               if(pic_url) {
+                   var i = pic_url.lastIndexOf('_310x');
+                   if(i > 0) {
+                       pic_url = pic_url.substring(0, i);
+                   }
+                   data.pic_url = pic_url;
+               }
                console.log('no item data');
            }
            data.user = nick;
@@ -138,8 +155,9 @@ setTimeout(function() {
         });
     }
     
-}, 1000);
+};
 
 showHistories();
+saveHistory();
 
 });
