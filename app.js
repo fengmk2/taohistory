@@ -41,7 +41,11 @@ app.get('/history/save', function(req, res, next) {
 
 app.get('/history', function(req, res, next) {
     var cb = req.query.callback, query = {user: req.query.user};
-    db.histories.find(query).sort({updated_at: -1}).limit(49).toArray(function(err, items) {
+    var count = 49, page = parseInt(req.query.page || 1);
+    if(page == NaN || page <= 0) {
+        page = 1;
+    }
+    db.histories.find(query).sort({updated_at: -1}).skip(count * (page - 1)).limit(count).toArray(function(err, items) {
         db.histories.count(query, function(err, count) {
             res.send(cb + '(' + JSON.stringify({count: count, items: items || []}) + ');');
         });
